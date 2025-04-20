@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cloud Computing Q&A</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body { font-family: Arial; max-width: 600px; margin: 0 auto; padding: 20px; }
+        input { width: 70%; padding: 8px; }
+        button { padding: 8px 15px; }
+        #answer { margin-top: 20px; padding: 10px; background: #f0f0f0; }
+    </style>
+</head>
+<body>
+    <h1>Cloud Computing Q&A</h1>
+    <input type="text" id="question" placeholder="Ask a cloud computing question...">
+    <button onclick="askQuestion()">Ask</button>
+    <div id="answer"></div>
+
+    <script>
+        async function askQuestion() {
+            const question = document.getElementById("question").value;
+            const answerDiv = document.getElementById("answer");
+            answerDiv.innerHTML = "Loading...";
+
+            try {
+                const response = await axios.post(
+                    "https://api-inference.huggingface.co/models/google/flan-t5-xxl",
+                    { inputs: question },
+                    { headers: { "Authorization": "Bearer YOUR_HUGGINGFACE_TOKEN" } }
+                );
+                answerDiv.innerHTML = `<strong>Answer:</strong> ${response.data[0].generated_text}`;
+            } catch (err) {
+                answerDiv.innerHTML = "Error: API limit reached. Try later.";
+            }
+        }
+    </script>
+</body>
+</html>
